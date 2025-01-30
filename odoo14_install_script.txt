@@ -1,0 +1,143 @@
+sudo apt update && sudo apt-get dist-upgrade -y
+
+sudo apt install git python3-pip build-essential wget python3-dev python3-venv python3-wheel libfreetype6-dev libxml2-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less libjpeg-dev zlib1g-dev libpq-dev libxslt1-dev libldap2-dev libtiff5-dev libjpeg8-dev libopenjp2-7-dev liblcms2-dev libwebp-dev libharfbuzz-dev libfribidi-dev libxcb1-dev -y
+
+
+sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
+
+sudo apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb
+
+
+sudo useradd -m -U -r -d /opt/hub101v14 -s /bin/bash hub101v14
+
+sudo su - hub101v14
+
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 14.0 /opt/hub101v14/hub101v14
+
+
+cd /opt/hub101v14
+
+python3.8 -m venv hub101v14-venv
+
+
+source hub101v14-venv/bin/activate
+
+pip3 install wheel
+
+pip3 install -r /opt/hub101v14/hub101v14/requirements.txt
+
+pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd gdata
+
+deactivate
+
+exit
+
+sudo chmod -R 777 /opt/hub101v14
+
+########## LOG FILE ######
+$ sudo mkdir /var/log/hub101v14
+$ sudo chown -R hub101v14: /var/log/hub101v14
+
+
+
+### conf file ####
+$ sudo nano /etc/hub101v14.conf
+
+[options]
+; This is the password that allows database operations:
+admin_passwd = admin
+db_host = localhost
+db_port = 5432
+db_user = hub101v14
+db_password = digipg@dm1n
+pg_path = /opt/PostgreSQL/10/bin
+logfile = /var/log/hub101v14/hub101v14-server.log
+addons_path = /opt/hub101v14/hub101v14/addons,/opt/hub101v14/hub101v14/custom_apps,/opt/hub101v14/hub101v14/test_apps,/opt/hub101v14/hub101v14/james_dev,/opt/hub101v14/hub101v14/dats_dev
+xmlrpc_port = 4321
+log_db = True
+log_db_level = warning
+log_handler = :INFO
+log_level = info
+data_dir = /opt/hub101v14/.local/share/Odoo
+;limit_request = 8192
+;limit_time_cpu = 180
+;limit_time_real = 360
+max_cron_threads = 2
+;longpolling_port = 1235
+limit_request = 999999
+limit_time_cpu = 999999
+limit_time_real = 99999
+
+##### CREATE Postgresql User##########
+psql -h localhost -p 5432 -U postgres
+
+
+CREATE ROLE hub101v14 WITH 
+  LOGIN 
+  PASSWORD 'digipg@dm1n' 
+  SUPERUSER 
+  CREATEDB 
+  CREATEROLE 
+  INHERIT;
+
+#### service file ####
+
+$ sudo nano /etc/systemd/system/hub101v14.service
+
+[Unit]
+Description= Davao Car Care Masters Briq Version 14.0.1 12/20/2020 Source Code
+Requires=postgresql-10.service
+After=network.target postgresql-10.service
+
+[Service]
+Type=simple
+SyslogIdentifier=hub101v14
+PermissionsStartOnly=true
+User=hub101v14
+Group=hub101v14
+ExecStart=/opt/hub101v14/hub101v14-venv/bin/python3 /opt/hub101v14/hub101v14/odoo-bin -c /etc/hub101v14.conf --logfile /var/log/hub101v14/hub101v14-server.log
+StandardOutput=journal+console
+Restart=always
+RestartSec=5
+
+
+[Install]
+WantedBy=multi-user.target
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start hub101v14
+
+$ sudo systemctl status hub101v14
+
+####### USE ONLY FOR PRODUCTION ##############
+$ sudo systemctl enable hub101v14
+
+sudo ufw allow 7164/tcp
+sudo ufw disable 
+sudo ufw enable
+
+
+Installation Directory: /opt/PostgreSQL/10
+Server Installation Directory: /opt/PostgreSQL/10
+Data Directory: /opt/PostgreSQL/10/data
+Database Port: 5432
+Database Superuser: postgres
+Operating System Account: postgres
+Database Service: postgresql-10
+Command Line Tools Installation Directory: /opt/PostgreSQL/10
+pgAdmin4 Installation Directory: /opt/PostgreSQL/10/pgAdmin 4
+
+
+link for installer postgresql: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+
+
+
+
+
+
+
+
+
+
+

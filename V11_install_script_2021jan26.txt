@@ -1,0 +1,125 @@
+sudo apt update && sudo apt-get dist-upgrade -y
+
+// New Script
+sudo apt install git python3-pip build-essential wget python3-dev python3-venv python3-wheel libxslt-dev libzip-dev libldap2-dev libsasl2-dev python3-setuptools node-less -y
+
+wget https://builds.wkhtmltopdf.org/0.12.1.3/wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+
+sudo dpkg -i wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+
+	If there is dependency error:
+	sudo apt-get install -f -y
+	sudo apt --fix-broken install
+	sudo dpkg -i wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+
+sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
+sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
+
+sudo useradd -m -U -r -d /opt/aciV11 -s /bin/bash aciV11
+
+sudo su - aciV11
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 11.0 /opt/aciV11/aciV11
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 11.0 /root/Documents/jargon_construction
+
+
+cd /opt/aciV11
+
+
+#python3.6.15 is more suitable for V11
+python3.6 -m venv aciV11-venv
+
+
+source aciV11-venv/bin/activate
+
+pip3 install wheel
+
+pip3 install -r /opt/aciV11/aciV11/requirements.txt
+
+pip3 install python-openid gdata
+
+deactivate
+
+exit
+
+########## LOG FILE ######
+$ sudo mkdir /var/log/aciV11
+$ sudo chown -R aciV11: /var/log/aciV11
+
+
+
+### conf file ####
+$ sudo nano /etc/aciV11.conf
+
+[options]
+; This is the password that allows database operations:
+admin_passwd = admin
+db_host = localhost
+db_port = 5434
+db_user = aciV11
+db_password = digipg@dm1n
+pg_path = /opt/PostgreSQL/9.6/bin
+logfile = /var/log/aciV11/aciV11-server.log
+addons_path = /opt/aciV11/aciV11/addons,/opt/aciV11/aciV11/custom_apps,/opt/aciV11/aciV11/test_apps
+xmlrpc_port = 5551
+log_db = True
+log_db_level = warning
+log_handler = :INFO
+log_level = info
+limit_request = 999999
+limit_time_cpu = 999999
+limit_time_real = 99999
+
+
+#### service file ####
+
+$ sudo nano /etc/systemd/system/aciV11.service
+
+[Unit]
+Description=Davao Metal Flow Odoo Version 01/21/2021 Source Code
+Requires=postgresql-9.6.service 
+After=network.target postgresql-9.6.service 
+
+[Service]
+Type=simple
+SyslogIdentifier=aciV11
+PermissionsStartOnly=true
+User=aciV11
+Group=aciV11
+ExecStart=/opt/aciV11/aciV11-venv/bin/python3 /opt/aciV11/aciV11/odoo-bin -c /etc/aciV11.conf --logfile /var/log/aciV11/aciV11-server.log
+StandardOutput=journal+console
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start aciV11
+
+$ sudo systemctl status aciV11
+
+####### USE ONLY FOR PRODUCTION ##############
+$ sudo systemctl enable aciV11
+
+sudo ufw allow 8881/tcp
+sudo ufw disable 
+sudo ufw enable
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

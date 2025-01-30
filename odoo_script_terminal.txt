@@ -1,0 +1,16 @@
+##for update module
+./odoo-bin -c /etc/tradingV14.conf -d millTech_Jan_16 -u briqx_debranding --stop-after-init
+
+
+
+##for uninstall module
+#access odoo-bin
+./odoo-bin shell -c /etc/odoo.conf -d database_name
+
+#python to uninstsall module
+$ env['ir.module.module'].search([('name', '=', 'module_name')]).button_immediate_uninstall()
+
+
+##for install module
+./odoo-bin -c /etc/odooV14.conf -d my_database -i sale --stop-after-init
+

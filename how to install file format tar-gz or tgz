@@ -1,0 +1,6 @@
+$ tar -xzvf file.tar.gz
+$ cd file
+$ ./configure
+$ make
+$ sudo make install
+$ python --version

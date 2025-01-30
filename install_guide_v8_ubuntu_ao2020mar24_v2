@@ -1,0 +1,126 @@
+https://blog.laslabs.com/2015/09/installing-odoo-8-from-source-ubuntu/
+
+https://www.getopenerp.com/easy-odoo8-installation/
+
+======================================================================
+  
+
+sudo apt-get install python-dateutil python-docutils python-feedparser python-jinja2 python-ldap python-libxslt1 python-lxml python-mako python-mock python-openid python-psycopg2 python-psutil python-babel python-pychart python-pydot python-pyparsing python-reportlab python-simplejson python-tz python-unittest2 python-vatnumber python-vobject python-webdav python-werkzeug python-xlwt python-yaml python-zsi poppler-utils python-pip python-passlib python-decorator python-requests -y
+
+sudo apt-get install -y git python-virtualenv libxml2-dev libjpeg-dev libldap2-dev libsasl2-dev libxslt1-dev python-dev libtiff5-dev
+
+Install Python Dependency pyPdf
+
+	cd /usr/src/
+	wget http://pybrary.net/pyPdf/pyPdf-1.13.tar.gz
+	tar -zxvf pyPdf-1.13.tar.gz
+	cd pyPdf-1.13
+	python setup.py install
+	
+sudo apt-get install gcc python-dev mc bzr python-setuptools python-babel python-feedparser python-reportlab-accel python-zsi python-openssl python-egenix-mxdatetime python-jinja2 python-unittest2 python-mock python-docutils lptools make python-psutil python-paramiko poppler-utils python-pdftools antiword
+
+========================================================================
+
+sudo apt-get install -y npm
+sudo npm install -g less less-plugin-clean-css
+sudo apt-get install node-less -y
+
+wget https://builds.wkhtmltopdf.org/0.12.1.3/wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+sudo dpkg -i wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+
+	If there is dependency error:
+	sudo apt-get install -f
+	sudo apt --fix-broken install
+	sudo dpkg -i wkhtmltox_0.12.1.3-1~bionic_amd64.deb
+
+sudo ln -s /usr/local/bin/wkhtmltopdf /usr/bin
+sudo ln -s /usr/local/bin/wkhtmltoimage /usr/bin
+
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 8.0 /opt/junjaydvo8/junjaydvo8
+
+sudo useradd -m -U -r -d /opt/junjaydvo8 -s /bin/bash junjaydvo8
+
+sudo su - junjaydvo8
+
+===========================================================================
+
+$ cd /opt/junjaydvo8
+#$ virtualenv ./venv -- old edited by james
+$ virtualenv junjaydvo8-venv -- new version
+$ source junjaydvo8-venv/bin/activate
+$ pip install -r /opt/junjaydvo8/junjaydvo8/requirements.txt
+$ sudo pip uninstall psycopg2    
+$ pip install psycopg2-binary
+$ deactivate
+$ exit
+
+==============================================================================
+
+$ sudo mkdir /var/log/junjaydvo8
+$ sudo chown junjaydvo8: /var/log/junjaydvo8
+
+
+$ sudo nano /etc/junjaydvo8.conf
+
+[options]
+; This is the password that allows database operations:
+admin_passwd = admin
+db_host = localhost
+db_port = 5432
+db_user = junjaydvo8
+db_password = digipg@dm1n
+pg_path = /opt/PostgreSQL/9.6/bin
+logfile = /var/log/junjaydvo8/junjaydvo8-server.log
+addons_path = /opt/junjaydvo8/junjaydvo8/addons,/opt/junjaydvo8/junjaydvo8/custom_apps
+xmlrpc_port = 3282
+log_db = True
+log_db_level = warning
+log_handler = :INFO
+log_level = info
+
+======================================================================
+
+$ sudo nano /etc/systemd/system/junjaydvo8.service
+
+[Unit]
+Description= JunJayDVO Live ObiOne Version 8
+Requires=postgresql-9.6.service 
+After=network.target postgresql-9.6.service 
+
+[Service]
+Type=simple
+SyslogIdentifier=junjaydvo8
+PermissionsStartOnly=true
+User=junjaydvo8
+Group=junjaydvo8
+ExecStart=/opt/junjaydvo8/junjaydvo8-venv/bin/python2 /opt/junjaydvo8/junjaydvo8/openerp-server -c /etc/junjaydvo8.conf --logfile /var/log/junjaydvo8/junjaydvo8-server.log
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
+======================================================================
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start junjaydvo8
+
+$ sudo systemctl status junjaydvo8
+
+####### USE ONLY FOR PRODUCTION ##############
+$ sudo systemctl enable junjaydvo8
+======================================================================
+
+sudo ufw allow 3282/tcp
+sudo ufw disable 
+sudo ufw enable
+
+
+
+
+
+
+
+
+
+
+
+

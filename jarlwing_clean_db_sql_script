@@ -1,0 +1,83 @@
+delete from account_payment;
+
+delete from account_payment_reconcile; 
+delete from account_payment_register;
+delete from account_full_reconcile;
+delete from account_analytic_line;
+delete from account_partial_reconcile;
+delete from account_move_line;
+delete from account_move;
+
+delete from stock_move_line;
+delete from stock_move;
+delete from stock_move_move_rel;
+delete from stock_quant;
+delete from stock_valuation_layer;
+delete from stock_picking;
+delete from stock_warehouse_orderpoint;
+
+delete from sale_order_line;
+delete from sale_order_line_invoice_rel;
+delete from sale_order;
+delete from account_tax_sale_order_line_rel;
+
+delete from stock_inventory_line; 
+delete from stock_inventory;
+delete from stock_inventory_stock_location_rel;
+delete from account_tax_purchase_order_line_rel;
+delete from procurement_group;
+
+delete from purchase_order_stock_picking_rel;
+delete from purchase_order_line;
+delete from purchase_order;
+
+delete from mrp_disassemble_by_product ;
+delete from mrp_disassemble_line;
+delete from mrp_disassemble;
+
+
+
+delete  from material_request;
+delete from material_request_line;
+
+delete from mrp_production;
+delete from mrp_unbuild;
+delete from stock_scrap;
+
+-- Step 1: Delete order lines associated with all POS orders
+DELETE FROM pos_order_line;
+
+-- Step 2: Delete payments associated with all POS orders
+DELETE FROM pos_payment;
+
+-- Step 3: Delete all POS orders
+DELETE FROM pos_order;
+
+-- Step 4: Delete all POS sessions (this will also delete any related orders, as we've already deleted them)
+DELETE FROM pos_session;
+
+
+delete from bir_sls;
+delete from bir_slp;
+delete from briq_sales_book;
+delete from briq_general_ledger ;
+delete from briq_purchases_book;
+delete from briq_receipts_book ;
+delete from briq_sales_book;
+delete from briq_disbursements_book;
+
+delete from stock_production_lot;
+
+
+delete from account_edi_document;
+delete from mail_channel_partner;
+delete from mail_followers;
+delete from mail_followers_mail_message_subtype_rel;
+delete from mail_mail;
+delete from mail_mail_res_partner_rel;
+delete from mail_message;
+delete from mail_message_mail_channel_rel;
+delete from mail_message_res_partner_needaction_rel;
+delete from mail_message_res_partner_rel;
+delete from mail_tracking_value;
+delete from message_attachment_rel;

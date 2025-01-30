@@ -1,0 +1,149 @@
+
+sudo useradd -m -U -r -d /opt/odooV17 -s /bin/bash odooV17
+
+sudo su - odooV17
+
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 17.0 /opt/odooV17/odooV17
+
+sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wkhtmltox_0.12.6-1.bionic_amd64.deb
+
+sudo apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb
+
+
+cd /opt/odooV17
+
+
+#Python Version must 3.10 version
+python3 --version
+
+pip3 --version
+
+#install postgresql 12 or above
+psql --version
+
+
+sudo apt install python3-pip libldap2-dev libpq-dev libsasl2-dev
+
+python3 -m venv odooV17-venv
+
+source odooV17-venv/bin/activate
+
+pip3 install wheel
+
+pip3 install -r /opt/odooV17/odooV17/requirements.txt
+
+
+deactivate
+
+exit
+
+########## LOG FILE ######
+$ sudo mkdir /var/log/odooV17
+$ sudo chown -R odooV17: /var/log/odooV17
+
+
+
+### conf file ####
+$ sudo nano /etc/odooV17.conf
+
+[options]
+; This is the password that allows database operations:
+admin_passwd = admin
+db_host = localhost
+db_port = 5431
+db_user = odooV17
+db_password = odooPassword
+pg_path = /opt/PostgreSQL/12/bin
+logfile = /var/log/odooV17/odooV17-server.log
+addons_path = /opt/odooV17/odooV17/addons
+xmlrpc_port = 8069
+log_db = True
+log_db_level = warning
+log_handler = :INFO
+log_level = info
+
+####Vscode Setup Python Debuger###
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+   "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Odoo",
+        "type": "python",
+        "request": "launch",
+        "program": "/opt/odooV17/odooV17/odoo-bin",
+        "args": [
+          "-c", "/etc/odooV17.conf",
+          "--logfile", "/var/log/odooV17/odooV17-server.log"
+        ],
+        "console": "integratedTerminal",
+        "env": {
+          "PYTHONPATH": "/opt/odooV17/odooV17-venv/lib/python3.Version/site-packages"  // Adjust if necessary
+        },
+        "pythonPath": "/opt/odooV17/odooV17-venv/bin/python3"
+      }
+    ]
+}
+
+#### service file ####
+
+##For Deployment
+
+$ sudo nano /etc/systemd/system/odooV17.service
+
+[Unit]
+Description= LPDHI Briq Version 14.0.1 12/20/2020 Source Code
+Requires=postgresql-10.service 
+After=network.target postgresql-10.service 
+
+[Service]
+Type=simple
+SyslogIdentifier=odooV17
+PermissionsStartOnly=true
+User=odooV17
+Group=odooV17
+ExecStart=/opt/odooV17/odooV17-venv/bin/python3 /opt/odooV17/odooV17/odoo-bin -c /etc/odooV17.conf --logfile /var/log/odooV17/odooV17-server.log
+StandardOutput=journal+console
+
+[Install]
+WantedBy=multi-user.target
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start odooV17
+
+$ sudo systemctl status odooV17
+
+####### USE ONLY FOR PRODUCTION ##############
+$ sudo systemctl enable odooV17
+
+sudo ufw allow 8010/tcp
+sudo ufw disable 
+sudo ufw enable
+
+
+Installation Directory: /opt/PostgreSQL/10
+Server Installation Directory: /opt/PostgreSQL/10
+Data Directory: /opt/PostgreSQL/10/data
+Database Port: 5432
+Database Superuser: postgres
+Operating System Account: postgres
+Database Service: postgresql-10
+Command Line Tools Installation Directory: /opt/PostgreSQL/10
+pgAdmin4 Installation Directory: /opt/PostgreSQL/10/pgAdmin 4
+
+
+link for installer postgresql: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+
+
+
+
+
+
+
+
+
+
+
