@@ -106,7 +106,7 @@ $ sudo nano /etc/systemd/system/odoov18.service
 
 [Unit]
 Description= Briq Odoo 18 source code
-Requires=postgresql-10.service
+Requires=postgresql-12.service
 After=network.target postgresql-12.service
 	
 [Service]
