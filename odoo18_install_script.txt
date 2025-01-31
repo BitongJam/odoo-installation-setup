@@ -1,0 +1,163 @@
+sudo apt update && sudo apt-get dist-upgrade -y
+
+
+#To install the necessary packages for Python 3, you can use the following code:
+sudo apt-get install python3.10-dev 
+
+sudo apt-get install build-essential libjpeg-dev libpq-dev libjpeg8-dev libxml2-dev libssl-dev libffi-dev libmysqlclient-dev libxslt1-dev zlib1g-dev libsasl2-dev libldap2-dev liblcms2-dev
+
+#install web dependencies
+sudo apt-get install -y npm
+sudo ln -s /usr/bin/nodejs/usr/bin/node 
+sudo npm install -g less less-plugin-clean-css 
+sudo apt-get install -y node-less
+
+#Install Wkhtmltopdf for qweb report
+sudo wget https://github.com/wkhtmltopdf/wkhtmltopdf/releases/download/0.12.5/wkhtmltox_0.12.5-1.bionic_amd64.deb
+
+sudo apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb
+
+#NOTE : MAKE SURE YOUR POSTGRESQL IS 12
+link: https://www.postgresql.org/download/linux/ubuntu/
+
+sudo useradd -m -U -r -d /opt/odoov18 -s /bin/bash odoov18
+
+sudo su - odoov18
+
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 18.0 --single-branch /opt/odoov18/odoov18
+
+
+cd /opt/odoov18
+
+
+
+
+#make sure your python version is python3.10 or above
+python3 -m venv odoov18-venv
+
+source odoov18-venv/bin/activate
+
+pip3 install wheel
+
+pip3 install -r /opt/odoov18/odoov18/requirements.txt
+
+
+deactivate
+
+exit
+
+sudo chmod -R 777 /opt/odoov18
+
+########## LOG FILE ######
+$ sudo mkdir /var/log/odoov18
+$ sudo chown -R odoov18: /var/log/odoov18
+
+
+
+### conf file ####
+$ sudo nano /etc/odoov18.conf
+
+[options]
+; This is the password that allows database operations:
+admin_passwd = admin
+db_host = localhost
+db_port = 5435
+db_user = odoov18
+db_password = digipg@dm1n
+pg_path = /opt/PostgreSQL/10/bin
+logfile = /var/log/odoov18/odoov18-server.log
+addons_path = /opt/odoov18/odoov18/addons
+xmlrpc_port = 4321
+log_db = True
+log_db_level = warning
+log_handler = :INFO
+log_level = info
+data_dir = /opt/odoov18/.local/share/Odoo
+;limit_request = 8192
+;limit_time_cpu = 180
+;limit_time_real = 360
+max_cron_threads = 2
+;longpolling_port = 1235
+limit_request = 999999
+limit_time_cpu = 999999
+limit_time_real = 99999
+
+
+
+####change or set password of postgresql(if needed)#####
+sudo -u postgres psql -p 5435
+ALTER USER postgres WITH PASSWORD 'new_password';
+
+##### CREATE Postgresql User##########
+psql -h localhost -p 5435 -U postgres
+
+
+CREATE ROLE odoov18 WITH 
+  LOGIN 
+  PASSWORD 'digipg@dm1n' 
+  SUPERUSER 
+  CREATEDB 
+  CREATEROLE 
+  INHERIT;
+
+#### service file ####
+
+$ sudo nano /etc/systemd/system/odoov18.service
+
+[Unit]
+Description= Briq Odoo 18 source code
+Requires=postgresql-10.service
+After=network.target postgresql-12.service
+	
+[Service]
+Type=simple
+SyslogIdentifier=odoov18
+PermissionsStartOnly=true
+User=odoov18
+Group=odoov18
+ExecStart=/opt/odoov18/odoov18-venv/bin/python3 /opt/odoov18/odoov18/odoo-bin -c /etc/odoov18.conf --logfile /var/log/odoov18/odoov18-server.log
+StandardOutput=journal+console
+Restart=always
+RestartSec=5
+
+
+[Install]
+WantedBy=multi-user.target
+
+$ sudo systemctl daemon-reload
+$ sudo systemctl start odoov18
+
+$ sudo systemctl status odoov18
+
+####### USE ONLY FOR PRODUCTION ##############
+$ sudo systemctl enable odoov18
+
+sudo ufw allow 7164/tcp
+sudo ufw disable 
+sudo ufw enable
+
+
+Installation Directory: /opt/PostgreSQL/10
+Server Installation Directory: /opt/PostgreSQL/10
+Data Directory: /opt/PostgreSQL/10/data
+Database Port: 5435
+Database Superuser: postgres
+Operating System Account: postgres
+Database Service: postgresql-10
+Command Line Tools Installation Directory: /opt/PostgreSQL/10
+pgAdmin4 Installation Directory: /opt/PostgreSQL/10/pgAdmin 4
+
+
+link for installer postgresql: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
+
+
+
+
+
+
+
+
+
+
+
+
