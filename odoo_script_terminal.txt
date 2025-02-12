@@ -1,5 +1,5 @@
 ##for update module
-./odoo-bin -c /etc/tradingV14.conf -d millTech_Jan_16 -u briqx_debranding --stop-after-init
+./odoo-bin -c /etc/tradingV14.conf -d database -u module_name --stop-after-init
 
 
 
