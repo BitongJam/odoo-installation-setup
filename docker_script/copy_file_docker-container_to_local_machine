@@ -1,0 +1,9 @@
+#Find the running cotainer
+docker ps
+
+# (Use docker ps -a to see stopped containers) List contents inside the container
+docker exec <container_name_or_id> ls -l <container_path>
+
+#Copy the folder to your local machine
+docker cp <container_name_or_id>:<container_path> <local_destination>
+
