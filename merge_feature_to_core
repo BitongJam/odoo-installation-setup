@@ -1,0 +1,7 @@
+git checkout main
+git pull origin main
+git merge --squash feature-branch
+git commit -m "Feature XYZ: Add new functionality"
+git push origin main
+git branch -d feature-branch
+git push origin --delete feature-branch
