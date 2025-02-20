@@ -1,6 +1,12 @@
 git checkout main
 git pull origin main
-git merge --squash feature-branch
+
+# Squash merge feature branch
+git merge --squash branch_feature
+
+# Manually commit with a custom title and include feature branch commits
+git commit -m "🚀 Merged Feature: Add new features" -m "$(git log --oneline --no-merges branch_core..branch_feature)"
+
 git commit -m "Feature XYZ: Add new functionality"
 git push origin main
 git branch -d feature-branch
