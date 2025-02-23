@@ -1,0 +1,137 @@
+Absolutely! Here’s a **step-by-step guide** based on our troubleshooting session, tailored for setting up **Ngrok** with **Odoo** on Ubuntu. This includes the DNS fix that made it all work!  
+
+---
+
+# **Ngrok Setup for Odoo with DNS Fix on Ubuntu**  
+
+## **1. Install Ngrok**  
+If you haven’t already, download and install Ngrok:  
+```bash
+sudo apt update
+sudo apt install unzip
+curl -s https://ngrok-agent.s3.amazonaws.com/ngrok.asc | sudo tee /etc/apt/trusted.gpg.d/ngrok.asc >/dev/null
+echo "deb https://ngrok-agent.s3.amazonaws.com buster main" | sudo tee /etc/apt/sources.list.d/ngrok.list
+sudo apt update && sudo apt install ngrok
+```
+
+---
+
+## **2. Connect Ngrok to Your Account**  
+Sign up at [https://ngrok.com](https://ngrok.com) and get your Auth Token. Then run:  
+```bash
+ngrok config add-authtoken YOUR_AUTH_TOKEN_HERE
+```
+
+---
+
+## **3. Start Ngrok for Odoo**  
+Assuming Odoo runs on **port 7813**, start Ngrok like this:  
+```bash
+ngrok http http://localhost:7813 --host-header="rewrite" --log=stdout
+```
+
+This will provide you with a public HTTPS URL, e.g., `https://xxxx-xxxx.ngrok-free.app`
+
+---
+
+## **4. Fix DNS Resolution Issue**  
+To ensure Ngrok URLs resolve correctly, switch to Cloudflare's DNS:  
+
+1. **Edit DNS Configuration**:  
+```bash
+sudo nano /etc/resolv.conf
+```
+
+Replace the contents with:  
+```plaintext
+#nameserver 127.0.0.53
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+options edns0 trust-ad
+search .
+```
+
+2. **Flush DNS Cache**:  
+```bash
+sudo resolvectl flush-caches
+```
+
+If that doesn’t work, restart the network manager:  
+```bash
+sudo systemctl restart NetworkManager
+```
+
+---
+
+## **5. Make DNS Change Permanent**  
+Since `/etc/resolv.conf` is dynamically managed by `systemd-resolved`, make the change permanent by disabling it:  
+```bash
+sudo systemctl disable systemd-resolved.service
+sudo systemctl stop systemd-resolved.service
+```
+
+Then, recreate a static resolv.conf:  
+```bash
+sudo rm /etc/resolv.conf
+sudo nano /etc/resolv.conf
+```
+
+Add the following lines:  
+```plaintext
+nameserver 1.1.1.1
+nameserver 1.0.0.1
+```
+
+Finally, restart the network service:  
+```bash
+sudo systemctl restart NetworkManager
+```
+
+---
+
+## **6. Test DNS and Ngrok**  
+Make sure the Ngrok URL is resolving:  
+```bash
+nslookup YOUR-NGROK-URL.ngrok-free.app
+curl -I https://YOUR-NGROK-URL.ngrok-free.app/
+```
+
+You should see a valid **IP address** from `nslookup` and a `200 OK` or `301 Redirect` from `curl`.  
+
+Open the URL in your browser to check if Odoo is loading properly!
+
+---
+
+## **7. (Optional) Configure Odoo for Proxy Support**  
+If you encounter redirect loops or HTTPS issues, update Odoo's config:  
+```ini
+proxy_mode = True
+```
+
+And make sure you have this in your Odoo configuration file (usually `odoo.conf`). Then restart Odoo:  
+```bash
+sudo systemctl restart odoo
+```
+
+---
+
+## **8. Troubleshooting Tips**  
+- If the URL doesn’t resolve, **clear browser cache** or try in **Incognito mode**.  
+- Test on another network (like **mobile data**) to rule out local network restrictions.  
+- If still stuck, switch DNS to **Google DNS**:  
+```plaintext
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+```
+
+---
+
+## **9. Stopping Ngrok**  
+To stop the tunnel, simply press `CTRL + C` in the terminal where Ngrok is running.
+
+---
+
+## **That’s It! 🎉**  
+You’ve now got Ngrok tunneling your Odoo instance securely and reliably! 🚀  
+
+Keep this note handy for future projects, or let me know if you need any more help. Happy coding! 😎
