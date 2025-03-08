@@ -1,0 +1,4 @@
+--Script on changing operation type in purchase order and its picking but still on ready
+update stock_picking set picking_type_id=177 where picking_type_id = 249; 
+update stock_move set picking_type_id=177 where picking_type_id = 249; 
+update purchase_order set picking_type_id=177 where picking_type_id = 249; 
