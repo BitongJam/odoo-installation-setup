@@ -8,23 +8,23 @@ sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wk
 sudo apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb
 
 
-sudo useradd -m -U -r -d /opt/hub101v14 -s /bin/bash hub101v14
+sudo useradd -m -U -r -d /opt/hrmsv14 -s /bin/bash hrmsv14
 
-sudo su - hub101v14
+sudo su - hrmsv14
 
-git clone https://www.github.com/odoo/odoo --depth 1 --branch 14.0 /opt/hub101v14/hub101v14
-
-
-cd /opt/hub101v14
-
-python3.8 -m venv hub101v14-venv
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 14.0 /opt/hrmsv14/hrmsv14
 
 
-source hub101v14-venv/bin/activate
+cd /opt/hrmsv14
+
+python3.8 -m venv hrmsv14-venv
+
+
+source hrmsv14-venv/bin/activate
 
 pip3 install wheel
 
-pip3 install -r /opt/hub101v14/hub101v14/requirements.txt
+pip3 install -r /opt/hrmsv14/hrmsv14/requirements.txt
 
 pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd gdata
 
@@ -32,33 +32,33 @@ deactivate
 
 exit
 
-sudo chmod -R 777 /opt/hub101v14
+sudo chmod -R 777 /opt/hrmsv14
 
 ########## LOG FILE ######
-$ sudo mkdir /var/log/hub101v14
-$ sudo chown -R hub101v14: /var/log/hub101v14
+$ sudo mkdir /var/log/hrmsv14
+$ sudo chown -R hrmsv14: /var/log/hrmsv14
 
 
 
 ### conf file ####
-$ sudo nano /etc/hub101v14.conf
+$ sudo nano /etc/hrmsv14.conf
 
 [options]
 ; This is the password that allows database operations:
 admin_passwd = admin
 db_host = localhost
 db_port = 5432
-db_user = hub101v14
+db_user = hrmsv14
 db_password = digipg@dm1n
 pg_path = /opt/PostgreSQL/10/bin
-logfile = /var/log/hub101v14/hub101v14-server.log
-addons_path = /opt/hub101v14/hub101v14/addons,/opt/hub101v14/hub101v14/custom_apps,/opt/hub101v14/hub101v14/test_apps,/opt/hub101v14/hub101v14/james_dev,/opt/hub101v14/hub101v14/dats_dev
+logfile = /var/log/hrmsv14/hrmsv14-server.log
+addons_path = /opt/hrmsv14/hrmsv14/addons,/opt/hrmsv14/hrmsv14/custom_apps,/opt/hrmsv14/hrmsv14/test_apps,/opt/hrmsv14/hrmsv14/james_dev,/opt/hrmsv14/hrmsv14/dats_dev
 xmlrpc_port = 4321
 log_db = True
 log_db_level = warning
 log_handler = :INFO
 log_level = info
-data_dir = /opt/hub101v14/.local/share/Odoo
+data_dir = /opt/hrmsv14/.local/share/Odoo
 ;limit_request = 8192
 ;limit_time_cpu = 180
 ;limit_time_real = 360
@@ -72,7 +72,7 @@ limit_time_real = 99999
 psql -h localhost -p 5432 -U postgres
 
 
-CREATE ROLE hub101v14 WITH 
+CREATE ROLE hrmsv14 WITH 
   LOGIN 
   PASSWORD 'digipg@dm1n' 
   SUPERUSER 
@@ -82,20 +82,20 @@ CREATE ROLE hub101v14 WITH
 
 #### service file ####
 
-$ sudo nano /etc/systemd/system/hub101v14.service
+$ sudo nano /etc/systemd/system/hrmsv14.service
 
 [Unit]
-Description= Davao Car Care Masters Briq Version 14.0.1 12/20/2020 Source Code
+Description= HRMS Briq Version 14.0.1 12/20/2020 Source Code
 Requires=postgresql-10.service
 After=network.target postgresql-10.service
 
 [Service]
 Type=simple
-SyslogIdentifier=hub101v14
+SyslogIdentifier=hrmsv14
 PermissionsStartOnly=true
-User=hub101v14
-Group=hub101v14
-ExecStart=/opt/hub101v14/hub101v14-venv/bin/python3 /opt/hub101v14/hub101v14/odoo-bin -c /etc/hub101v14.conf --logfile /var/log/hub101v14/hub101v14-server.log
+User=hrmsv14
+Group=hrmsv14
+ExecStart=/opt/hrmsv14/hrmsv14-venv/bin/python3 /opt/hrmsv14/hrmsv14/odoo-bin -c /etc/hrmsv14.conf --logfile /var/log/hrmsv14/hrmsv14-server.log
 StandardOutput=journal+console
 Restart=always
 RestartSec=5
@@ -105,12 +105,12 @@ RestartSec=5
 WantedBy=multi-user.target
 
 $ sudo systemctl daemon-reload
-$ sudo systemctl start hub101v14
+$ sudo systemctl start hrmsv14
 
-$ sudo systemctl status hub101v14
+$ sudo systemctl status hrmsv14
 
 ####### USE ONLY FOR PRODUCTION ##############
-$ sudo systemctl enable hub101v14
+$ sudo systemctl enable hrmsv14
 
 sudo ufw allow 7164/tcp
 sudo ufw disable 

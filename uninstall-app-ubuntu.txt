@@ -1,0 +1,67 @@
+Uninstalling software on Ubuntu depends on how it was installed. Here are different methods:  
+
+### **1. Using `apt` (For Debian-based Packages)**
+If you installed the software via `apt` or `apt-get`:  
+#### **Uninstall a package**  
+```bash
+sudo apt remove package-name
+```  
+#### **Uninstall and remove configuration files**  
+```bash
+sudo apt purge package-name
+```  
+#### **Remove unused dependencies**  
+```bash
+sudo apt autoremove
+```  
+
+---
+
+### **2. Using `dpkg` (For `.deb` Packages)**
+If you installed the software manually using a `.deb` file:  
+#### **List installed packages**  
+```bash
+dpkg --list | grep package-name
+```  
+#### **Remove the package**  
+```bash
+sudo dpkg --remove package-name
+```  
+#### **Remove including configuration files**  
+```bash
+sudo dpkg --purge package-name
+```  
+
+---
+
+### **3. Using `snap` (For Snap Packages)**
+If the software was installed via Snap:  
+#### **List installed snap packages**  
+```bash
+snap list
+```  
+#### **Remove a snap package**  
+```bash
+sudo snap remove package-name
+```  
+
+---
+
+### **4. Using `flatpak` (For Flatpak Apps)**
+If installed via Flatpak:  
+#### **List installed Flatpak applications**  
+```bash
+flatpak list
+```  
+#### **Uninstall a Flatpak app**  
+```bash
+flatpak uninstall package-name
+```  
+
+---
+
+### **5. Using GUI (Ubuntu Software Center)**
+1. Open **Ubuntu Software**.  
+2. Go to the **Installed** tab.  
+3. Find the application, click **Remove**, and confirm.  
+

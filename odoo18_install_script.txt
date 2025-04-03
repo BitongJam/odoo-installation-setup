@@ -137,18 +137,6 @@ sudo ufw disable
 sudo ufw enable
 
 
-Installation Directory: /opt/PostgreSQL/10
-Server Installation Directory: /opt/PostgreSQL/10
-Data Directory: /opt/PostgreSQL/10/data
-Database Port: 5435
-Database Superuser: postgres
-Operating System Account: postgres
-Database Service: postgresql-10
-Command Line Tools Installation Directory: /opt/PostgreSQL/10
-pgAdmin4 Installation Directory: /opt/PostgreSQL/10/pgAdmin 4
-
-
-link for installer postgresql: https://www.enterprisedb.com/downloads/postgres-postgresql-downloads
 
 
 
