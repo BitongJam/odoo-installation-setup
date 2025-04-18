@@ -67,6 +67,18 @@ limit_request = 999999
 limit_time_cpu = 999999
 limit_time_real = 99999
 
+##### CREATE Postgresql User##########
+psql -h localhost -p 5432 -U postgres
+
+
+CREATE ROLE pos_odoo16 WITH 
+  LOGIN 
+  PASSWORD 'password' 
+  SUPERUSER 
+  CREATEDB 
+  CREATEROLE 
+  INHERIT;
+
 
 #### service file ####
 
