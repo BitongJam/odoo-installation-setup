@@ -20,4 +20,14 @@ sudo apt -y install postgresql-(version)
 sudo systemcctl status psotgresql@(version)-main
 pg_lsclusters
 
+#set password of posgres
+sudo -i -u postgres
+/usr/lib/postgresql/12/bin/psql -p 5433
+
+ALTER USER postgres WITH PASSWORD 'your_new_password';
+
+\q
+
+
+
 
