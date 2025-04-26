@@ -1,27 +1,32 @@
 sudo apt update
 
-sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget
+# Install dependencies including libbz2-dev
+sudo apt install build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev wget libbz2-dev
 
 cd /tmp
 
+# Download Python source
 wget https://www.python.org/ftp/python/3.8.10/Python-3.8.10.tgz
 
+# Extract the tarball
 tar -xf Python-3.8.10.tgz
 
+# Clean up the tarball
 sudo rm Python-3.8.10.tgz
 
 cd Python-3.8.10
 
+# Configure the build process
 ./configure --enable-optimizations
 
+# Compile Python and install
 sudo make install
 
+# Alternatively, you can use altinstall to avoid overwriting the default system Python
+# sudo make altinstall
 
-Note: If you already have Python 3, but want to create a second Python installation on top of that one, run the following command:
-	(OPTIONAL)
-	sudo make altinstall
-
-python3.12 --version
+# Verify the installation
+python3.8 --version
 
 
 REF AND MORE DETAILS: https://phoenixnap.com/kb/how-to-install-python-3-ubuntu
