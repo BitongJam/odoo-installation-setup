@@ -20,10 +20,11 @@ cd Python-3.8.10
 ./configure --enable-optimizations
 
 # Compile Python and install
-sudo make install
+#sudo make install
 
 # Alternatively, you can use altinstall to avoid overwriting the default system Python
-# sudo make altinstall
+sudo make -j$(nproc)
+sudo make altinstall 
 
 # Verify the installation
 python3.8 --version
