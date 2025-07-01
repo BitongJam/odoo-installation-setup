@@ -1,0 +1,161 @@
+# 🌐 Odoo WSL2 Network Access Setup (Port 2492)
+
+This guide sets up your **Odoo project running inside WSL2** to be accessible from **your Windows host and other devices on your local network**, using **port 2492**.
+
+---
+
+## ✅ Step 1: Edit `odoo.conf` to Listen on All Interfaces
+
+> Edit this inside WSL2 to allow connections from outside WSL.
+
+```ini
+[options]
+xmlrpc_interface = 0.0.0.0
+port = 2492
+```
+
+Then restart Odoo inside WSL2:
+
+```bash
+./odoo-bin -c /path/to/your/odoo.conf
+```
+
+---
+
+## ✅ Step 2: Get Your WSL2 IP Address
+
+Open **PowerShell** in Windows:
+
+```powershell
+wsl hostname -I
+```
+
+Example output:
+
+```
+172.30.39.77
+```
+
+Write this IP down — it will change after reboot.
+
+---
+
+## ✅ Step 3: Set Port Forwarding from Windows to WSL2
+
+> This command tells Windows to forward traffic on port 2492 to your Odoo running in WSL2.
+
+Open **PowerShell as Administrator**:
+
+```powershell
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=2492 connectaddress=172.30.39.77 connectport=2492
+```
+
+Replace `172.30.39.77` with the IP you got in Step 2.
+
+---
+
+## ✅ Step 4: Allow Port 2492 Through Windows Firewall
+
+Still in **Admin PowerShell**, run:
+
+```powershell
+New-NetFirewallRule -DisplayName "Odoo 2492 Access" -Direction Inbound -LocalPort 2492 -Protocol TCP -Action Allow
+```
+
+Alternatively, you can do this manually:
+
+**Firewall (GUI Method):**
+
+* Go to **Control Panel > Windows Defender Firewall > Advanced Settings**
+* Click **Inbound Rules > New Rule**
+* Choose **Port > TCP > 2492**
+* Allow the connection > Apply to all profiles > Name it `Odoo 2492 Access`
+
+---
+
+## ✅ Step 5: Access Odoo in a Browser
+
+* From **Windows host**:
+
+  ```
+  http://localhost:2492
+  ```
+
+* From **other devices on the same network**:
+
+  1. Get your Windows IP:
+
+     ```powershell
+     ipconfig
+     ```
+
+     Look for `IPv4 Address`, e.g., `192.168.1.100`.
+
+  2. Open this in browser on your phone/tablet/etc.:
+
+     ```
+     http://192.168.1.100:2492
+     ```
+
+---
+
+## 🔁 Step 6: Reconnect After Reboot
+
+WSL2 changes its IP address each time you reboot. You need to:
+
+### 1. Get new WSL2 IP:
+
+```powershell
+wsl hostname -I
+```
+
+### 2. Remove old port forwarding:
+
+```powershell
+netsh interface portproxy delete v4tov4 listenport=2492 listenaddress=0.0.0.0
+```
+
+### 3. Add new port forwarding:
+
+```powershell
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=2492 connectaddress=<new_wsl_ip> connectport=2492
+```
+
+---
+
+## 🛠 Optional: Automation Script
+
+If you want, you can automate the port forwarding step using this script:
+
+### 🔄 PowerShell Script: `update-odoo-port.ps1`
+
+```powershell
+# Get current WSL2 IP
+$wslIP = wsl hostname -I | Out-String
+$wslIP = $wslIP.Trim()
+
+# Remove old port proxy (safe to do even if it doesn't exist)
+netsh interface portproxy delete v4tov4 listenport=2492 listenaddress=0.0.0.0
+
+# Add new port proxy rule
+netsh interface portproxy add v4tov4 listenaddress=0.0.0.0 listenport=2492 connectaddress=$wslIP connectport=2492
+
+Write-Host "Port 2492 has been forwarded to WSL2 IP $wslIP"
+```
+
+To use it:
+
+1. Save it as `update-odoo-port.ps1`
+2. Run it **as Administrator** after reboot
+3. (Optional) Schedule it with Task Scheduler for automation
+
+---
+
+📌 **You’re Done!**
+
+Your Odoo running in WSL2 is now accessible from:
+
+* Windows: `http://localhost:2492`
+* LAN: `http://<windows-ip>:2492`
+
+Let me know if you want this exported as a `.txt` or `.md` file!
