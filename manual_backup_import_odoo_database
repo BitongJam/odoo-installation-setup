@@ -1,0 +1,27 @@
+IF ODOO BACKUP AND RESTORE FAILE (COMMON ON DOCKER SETUP AND SOMETIME IN WSL)
+
+//Create Writetable Folder on /tmp
+sudo mkdir /tmp/[folder]
+sudo chmod -R 777 /tmp/[folder]
+
+
+//Manualy Dump Database
+sudo -u postgres /usr/bin/pg_dump --no-owner --file=/tmp/[folder]/dump.sql [database]
+
+ex:  
+ -sudo mkdir /tmp/testbackup
+ -sudo chmod -R 777 /tmp/testbackup 
+ -sudo -u postgres /usr/bin/pg_dump --no-owner --file=/tmp/testbackup/dump.sql clean_poc_db
+
+//Copy the filestore on Odoo Project [name of the folder on filestore you copy same as the database name]
+
+
+//IMPORTING
+
+//Open postgres
+psql -h localhost -p 5432 -U postgres
+
+//Create Database for import
+psql -p 5432 -d test_restore_db [dir]/dump.sql
+
+//Copy and Paste the Filestore make sure the filestore must be rename same as the database
