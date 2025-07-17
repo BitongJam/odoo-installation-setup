@@ -22,6 +22,14 @@ ex:
 psql -h localhost -p 5432 -U postgres
 
 //Create Database for import
-psql -p 5432 -d test_restore_db [dir]/dump.sql
+psql -p 5432 -d rmc_pocdb1 [dir]/dump.sql
+
+
+//Postgresql Install By Enterprise Installer
+/opt/PostgreSQL/[Version]/bin/psql -U postgres -d [create-db] -p [port] < dump.sql
+
+Ex: /opt/PostgreSQL/10/bin/psql -U postgres -d rmc_pocdb2 -p 5432 < clean_poc_db_dump.sql
+
+
 
 //Copy and Paste the Filestore make sure the filestore must be rename same as the database
