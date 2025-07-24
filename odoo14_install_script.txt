@@ -11,23 +11,23 @@ sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wk
 sudo apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb
 
 
-sudo useradd -m -U -r -d /opt/hrmsv14 -s /bin/bash hrmsv14
+sudo useradd -m -U -r -d /opt/rmc_poc -s /bin/bash rmc_poc
 
-sudo su - hrmsv14
+sudo su - rmc_poc
 
-git clone https://www.github.com/odoo/odoo --depth 1 --branch 14.0 /opt/hrmsv14/hrmsv14
-
-
-cd /opt/hrmsv14
-
-python3.8 -m venv hrmsv14-venv
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 14.0 /opt/rmc_poc/rmc_poc
 
 
-source hrmsv14-venv/bin/activate
+cd /opt/rmc_poc
+
+python3.8 -m venv rmc_poc-venv
+
+
+source rmc_poc-venv/bin/activate
 
 pip3 install wheel
 
-pip3 install -r /opt/hrmsv14/hrmsv14/requirements.txt
+pip3 install -r /opt/rmc_poc/rmc_poc/requirements.txt
 
 pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd gdata
 
@@ -35,33 +35,33 @@ deactivate
 
 exit
 
-sudo chmod -R 777 /opt/hrmsv14
+sudo chmod -R 777 /opt/rmc_poc
 
 ########## LOG FILE ######
-$ sudo mkdir /var/log/hrmsv14
-$ sudo chown -R hrmsv14: /var/log/hrmsv14
+$ sudo mkdir /var/log/rmc_poc
+$ sudo chown -R rmc_poc: /var/log/rmc_poc
 
 
 
 ### conf file ####
-$ sudo nano /etc/hrmsv14.conf
+$ sudo nano /etc/rmc_poc.conf
 
 [options]
 ; This is the password that allows database operations:
 admin_passwd = admin
 db_host = localhost
 db_port = 5432
-db_user = hrmsv14
+db_user = rmc_poc
 db_password = digipg@dm1n
 pg_path = /opt/PostgreSQL/10/bin
-logfile = /var/log/hrmsv14/hrmsv14-server.log
-addons_path = /opt/hrmsv14/hrmsv14/addons,/opt/hrmsv14/hrmsv14/custom_apps,/opt/hrmsv14/hrmsv14/test_apps,/opt/hrmsv14/hrmsv14/james_dev,/opt/hrmsv14/hrmsv14/dats_dev
+logfile = /var/log/rmc_poc/rmc_poc-server.log
+addons_path = /opt/rmc_poc/rmc_poc/addons,/opt/rmc_poc/rmc_poc/custom_apps,/opt/rmc_poc/rmc_poc/test_apps,/opt/rmc_poc/rmc_poc/james_dev,/opt/rmc_poc/rmc_poc/dats_dev
 xmlrpc_port = 4321
 log_db = True
 log_db_level = warning
 log_handler = :INFO
 log_level = info
-data_dir = /opt/hrmsv14/.local/share/Odoo
+data_dir = /opt/rmc_poc/.local/share/Odoo
 ;limit_request = 8192
 ;limit_time_cpu = 180
 ;limit_time_real = 360
@@ -75,7 +75,7 @@ limit_time_real = 99999
 psql -h localhost -p 5432 -U postgres
 
 
-CREATE ROLE hrmsv14 WITH 
+CREATE ROLE rmc_poc WITH 
   LOGIN 
   PASSWORD 'digipg@dm1n' 
   SUPERUSER 
@@ -85,7 +85,7 @@ CREATE ROLE hrmsv14 WITH
 
 #### service file ####
 
-$ sudo nano /etc/systemd/system/hrmsv14.service
+$ sudo nano /etc/systemd/system/rmc_poc.service
 
 [Unit]
 Description= HRMS Briq Version 14.0.1 12/20/2020 Source Code
@@ -94,11 +94,11 @@ After=network.target postgresql-10.service
 
 [Service]
 Type=simple
-SyslogIdentifier=hrmsv14
+SyslogIdentifier=rmc_poc
 PermissionsStartOnly=true
-User=hrmsv14
-Group=hrmsv14
-ExecStart=/opt/hrmsv14/hrmsv14-venv/bin/python3 /opt/hrmsv14/hrmsv14/odoo-bin -c /etc/hrmsv14.conf --logfile /var/log/hrmsv14/hrmsv14-server.log
+User=rmc_poc
+Group=rmc_poc
+ExecStart=/opt/rmc_poc/rmc_poc-venv/bin/python3 /opt/rmc_poc/rmc_poc/odoo-bin -c /etc/rmc_poc.conf --logfile /var/log/rmc_poc/rmc_poc-server.log
 StandardOutput=journal+console
 Restart=always
 RestartSec=5
@@ -108,12 +108,12 @@ RestartSec=5
 WantedBy=multi-user.target
 
 $ sudo systemctl daemon-reload
-$ sudo systemctl start hrmsv14
+$ sudo systemctl start rmc_poc
 
-$ sudo systemctl status hrmsv14
+$ sudo systemctl status rmc_poc
 
 ####### USE ONLY FOR PRODUCTION ##############
-$ sudo systemctl enable hrmsv14
+$ sudo systemctl enable rmc_poc
 
 sudo ufw allow 7164/tcp
 sudo ufw disable 
