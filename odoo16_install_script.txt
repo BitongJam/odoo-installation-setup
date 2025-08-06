@@ -8,24 +8,24 @@ sudo wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6-1/wk
 sudo apt install ./wkhtmltox_0.12.6-1.bionic_amd64.deb
 
 
-sudo useradd -m -U -r -d /opt/cloudappify16 -s /bin/bash cloudappify16
+sudo useradd -m -U -r -d /opt/new_grae16 -s /bin/bash new_grae16
 
-sudo su - cloudappify16
-
-
-git clone https://www.github.com/odoo/odoo --depth 1 --branch 16.0 /opt/cloudappify16/cloudappify16
+sudo su - new_grae16
 
 
-cd /opt/cloudappify16
-
-python3 -m venv cloudappify16-venv
+git clone https://www.github.com/odoo/odoo --depth 1 --branch 16.0 /opt/new_grae16/new_grae16
 
 
-source cloudappify16-venv/bin/activate
+cd /opt/new_grae16
+
+python3 -m venv new_grae16-venv
+
+
+source new_grae16-venv/bin/activate
 
 pip3 install wheel
 
-pip3 install -r /opt/cloudappify16/cloudappify16/requirements.txt
+pip3 install -r /opt/new_grae16/new_grae16/requirements.txt
 
 pip3 install Babel decorator docutils ebaysdk feedparser gevent greenlet html2text Jinja2 lxml Mako MarkupSafe mock num2words ofxparse passlib Pillow psutil psycopg2 pydot pyparsing PyPDF2 pyserial python-dateutil python-openid pytz pyusb PyYAML qrcode reportlab requests six suds-jurko vatnumber vobject Werkzeug XlsxWriter xlwt xlrd gdata
 
@@ -34,30 +34,30 @@ deactivate
 exit
 
 ########## LOG FILE ######
-$ sudo mkdir /var/log/cloudappify16
-$ sudo chown -R cloudappify16: /var/log/cloudappify16
+$ sudo mkdir /var/log/new_grae16
+$ sudo chown -R new_grae16: /var/log/new_grae16
 
 
 
 ### conf file ####
-$ sudo nano /etc/cloudappify16.conf
+$ sudo nano /etc/new_grae16.conf
 
 [options]
 ; This is the password that allows database operations:
 admin_passwd = admin
 db_host = localhost
 db_port = 5433
-db_user = cloudappify16
+db_user = new_grae16
 db_password = Admin_system_01
 pg_path = /opt/PostgreSQL/10/bin
-logfile = /var/log/cloudappify16/cloudappify16-server.log
-addons_path = /opt/cloudappify16/cloudappify16/addons
-xmlrpc_port = 8010
+logfile = /var/log/new_grae16/new_grae16-server.log
+addons_path = /opt/new_grae16/new_grae16/addons,/opt/new_grae16/new_grae16/custom_addons
+xmlrpc_port = 2384
 log_db = True
 log_db_level = warning
 log_handler = :INFO
 log_level = info
-data_dir = /opt/cloudappify16/.local/share/Odoo
+data_dir = /opt/new_grae16/.local/share/Odoo
 ;limit_request = 8192
 ;limit_time_cpu = 180
 ;limit_time_real = 360
@@ -81,7 +81,7 @@ psql - [port]
 psql -h localhost -p 5433 -U postgres
 
 
-CREATE ROLE cloudappify16 WITH 
+CREATE ROLE new_grae16 WITH 
   LOGIN 
   PASSWORD 'password' 
   SUPERUSER 
@@ -92,7 +92,7 @@ CREATE ROLE cloudappify16 WITH
 
 #### service file ####
 
-$ sudo nano /etc/systemd/system/cloudappify16.service
+$ sudo nano /etc/systemd/system/new_grae16.service
 
 [Unit]
 Description= LPDHI Briq Version 14.0.1 12/20/2020 Source Code
@@ -101,23 +101,23 @@ After=network.target postgresql@12-main.service ]
 
 [Service]
 Type=simple
-SyslogIdentifier=cloudappify16
+SyslogIdentifier=new_grae16
 PermissionsStartOnly=true
-User=cloudappify16
-Group=cloudappify16
-ExecStart=/opt/cloudappify16/cloudappify16-venv/bin/python3 /opt/cloudappify16/cloudappify16/odoo-bin -c /etc/cloudappify16.conf --logfile /var/log/cloudappify16/cloudappify16-server.log
+User=new_grae16
+Group=new_grae16
+ExecStart=/opt/new_grae16/new_grae16-venv/bin/python3 /opt/new_grae16/new_grae16/odoo-bin -c /etc/new_grae16.conf --logfile /var/log/new_grae16/new_grae16-server.log
 StandardOutput=journal+console
 
 [Install]
 WantedBy=multi-user.target
 
 $ sudo systemctl daemon-reload
-$ sudo systemctl start cloudappify16
+$ sudo systemctl start new_grae16
 
-$ sudo systemctl status cloudappify16
+$ sudo systemctl status new_grae16
 
 ####### USE ONLY FOR PRODUCTION ##############
-$ sudo systemctl enable cloudappify16
+$ sudo systemctl enable new_grae16
 
 sudo ufw allow 8010/tcp
 sudo ufw disable 
