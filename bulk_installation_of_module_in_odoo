@@ -1,0 +1,28 @@
+#Run this on 
+./odoo-bin shell -d db_name -c /path/odoo.conf
+
+modules = [
+    'point_of_sale','account','....'
+ ]
+
+# put all the list of module on the modules variable
+env['ir.module.module'].search([('name', 'in', modules)]).button_install()
+env.cr.commit()  # Commit changes to avoid lock issues
+
+
+#after this some of module will be put on a state 'To Be Installed'
+#Filter it then multiple check it all then click 'Action' and click Activate Module' to install and load all module 
+#NOTE: Its not practical but it works
+#NOTE: if point_of_sale is included to your project.. install it first manually then install the others
+
+
+#NOTE: This will check modules
+# installed = env['ir.module.module'].search([
+#     ('name', 'in', modules),
+#     ('state', '=', 'installed')
+# ]).mapped('name')
+
+# not_installed = list(set(modules) - set(installed))
+
+# print("✅ Installed:", installed)
+# print("❌ Not installed:", not_installed)
